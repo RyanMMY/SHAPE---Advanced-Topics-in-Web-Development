@@ -1,0 +1,61 @@
+CREATE TABLE route (
+    ROUTE_ID int(10),
+    COMPANY_CODE varchar(100),
+    DISTRICT varchar(100),
+    ROUTE_NAMEC varchar(100),
+    ROUTE_NAMES varchar(100),
+    ROUTE_NAMEE varchar(100),
+    ROUTE_TYPE varchar(100),
+    SERVICE_MODE varchar(100),
+    SPECIAL_TYPE int(10),
+    JOURNEY_TIME int(10),
+    FULL_FARE decimal(10,0),
+    LOC_START_NAMEC varchar(100),
+    LOC_START_NAMES varchar(100),
+    LOC_START_NAMEE varchar(100),
+    LOC_END_NAMEC varchar(100),
+    LOC_END_NAMES varchar(100),
+    LOC_END_NAMEE varchar(100),
+    HYPERLINK_C varchar(100),
+    HYPERLINK_S varchar(100),
+    HYPERLINK_E varchar(100),
+    LAST_UPDATE_DATE Datetime
+);
+
+ALTER TABLE `route`
+DROP `ROUTE_NAMEC`,
+DROP `ROUTE_NAMES`,
+DROP `LOC_START_NAMEC`,
+DROP `LOC_START_NAMES`,
+DROP `LOC_END_NAMEC`,
+DROP `LOC_END_NAMES`,
+DROP `HYPERLINK_C`,
+DROP `HYPERLINK_S`,
+DROP `HYPERLINK_E`;
+
+
+
+CREATE TABLE rstop (
+    ROUTE_ID int(10),
+    ROUTE_SEQ int(10),
+    STOP_SEQ int(10),
+    STOP_ID int(10),
+    STOP_NAMEC varchar(100),
+    STOP_NAMES varchar(100),
+    STOP_NAMEE varchar(100),
+    LAST_UPDATE_DATE datetime
+);
+
+ALTER TABLE `rstop`
+DROP `STOP_NAMEC`,
+DROP `STOP_NAMES`;
+
+
+
+CREATE TABLE stop (
+    STOP_ID int(10),
+    STOP_TYPE int(10),
+    X int(10),
+    Y int(10),
+    LAST_UPDATE_DATE datetime
+);

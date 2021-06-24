@@ -1,0 +1,246 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<style>
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #454545;
+    background-color: #454545;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+    background-color: inherit;
+    float: left;    
+    border: none;  
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 15px;
+    color:#bde0bc;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #292424;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #292424;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 7px 15px;
+    border: 0px solid #ccc;
+    border-top: none;
+
+    margin: 25px;
+    width: 40%;
+    padding: 10px;
+}
+
+.output {
+    margin: 35px;
+    color:#ffffff
+}
+
+body {background-color: #91805a;}
+    
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+    
+.button {
+  border: none;
+  color: white;
+  padding: 10px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  background-color: #5c5c5c;
+  border-radius: 12px;
+}
+
+</style>
+</head>
+
+
+<script>
+var request = new XMLHttpRequest();
+
+function openCity(evt, cityName) {
+    var i, tabcontent, tablinks;
+    
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+
+function output(){
+
+	if(request.readyState == 4){
+
+        if(request.status == 200){
+
+            var result = request.responseText;
+            
+            if(IsJsonString(result)== true){
+                
+                var element = document.getElementById("output");
+               
+                var answer = JSON.parse(result);
+                
+                if (answer.hasOwnProperty('ROUTE_NAMEE')) {
+                    element.innerHTML = "<i>Route Name:"+answer.ROUTE_NAMEE+"<br>Starting Point Location: "+answer.LOC_START_NAMEE+"<br>End Point Location: "+answer.LOC_END_NAMEE+"<br>Full Fare: "+answer.FULL_FARE+"</i><br>";
+                }
+                else{
+                    element.innerHTML = "<i>Status Code:"+answer.statuscode+"<br>Statuscode Message:"+answer.statusmessage+"</i>";
+                }
+            }
+            else{
+                var element = document.getElementById("output");
+                element.innerHTML = result;
+            }
+        }
+    }
+}
+    
+function IsJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+  
+function Search(){
+	var search = document.getElementById("search").value;
+    
+    var keyword = document.getElementById("GETkeyword").value;
+    
+	keyword=keyword.toString().replace(new RegExp('(["\"])', 'g'),"\\\""); 
+	
+    var url = "http://localhost/atwd/index.php/"+search+"="+keyword;
+	request.open("GET", url, true);
+	
+    request.onreadystatechange = output;
+
+    request.send(null);
+}
+
+function Update(){
+	var ROUTE_NAMEE = document.getElementById("PutROUTE_NAMEE").value;
+    
+	var LOC_START_NAMEE = document.getElementById("PutLOC_START_NAMEE").value;
+    
+	var LOC_END_NAMEE = document.getElementById("PutLOC_END_NAMEE").value;
+    
+    var FULL_FARE = document.getElementById("PutFULL_FARE").value;
+	
+	var url = "http://localhost/atwd/index.php/"+ROUTE_NAMEE+"/"+LOC_START_NAMEE+"/"+LOC_END_NAMEE+"/"+FULL_FARE;
+	request.open("Put", url, true);
+	request.onreadystatechange = output;
+	request.send(null);
+}
+
+function Delete(){
+	var search = document.getElementById("search").value;
+    
+    var keyword = document.getElementById("Deletekeyword").value;
+	
+	var url = "http://localhost/atwd/index.php/"+search+"/"+keyword;
+	request.open("Delete",url,true);
+	request.onreadystatechange = output;
+	request.send(null);
+}
+    
+function Add(){
+	var COMPANY_CODE = document.getElementById("PostCOMPANY_CODE").value;
+	var ROUTE_NAMEE = document.getElementById("PostROUTE_NAMEE").value;
+	var LOC_START_NAMEE = document.getElementById("PostLOC_START_NAMEE").value;
+	var LOC_END_NAMEE = document.getElementById("PostLOC_END_NAMEE").value;
+    var FULL_FARE = document.getElementById("PostFULL_FARE").value;
+	
+	var url = "http://localhost/atwd/index.php/"+COMPANY_CODE+"/"+ROUTE_NAMEE+"/"+LOC_START_NAMEE+"/"+LOC_END_NAMEE+"/"+FULL_FARE;
+	request.open("Post",url,true);
+	request.onreadystatechange = output;
+	request.send(null);
+}
+
+</script>
+
+
+
+<body>
+
+<div class="tab">
+  <button class="tablinks" onclick="openCity(event, 'Search')">Search</button>
+  <button class="tablinks" onclick="openCity(event, 'Update')">Update</button>
+  <button class="tablinks" onclick="openCity(event, 'Delete')">Delete</button>
+  <button class="tablinks" onclick="openCity(event, 'Add')">Add</button>
+</div>
+
+<div id="Search" class="tabcontent" style="color:#ffffff">
+<h1>Search Route</h1>
+    <label>Keyword:</label> <input type="text" id="GETkeyword"><br/>
+    <label>Type:</label> <select id="search">
+    <option value="ROUTE_NAMEE">Route Name</option>
+    <option value="LOC_START_NAMEE">Starting Point Location Name</option>
+    <option value="LOC_END_NAMEE">End Point Location Name</option>
+</select><br><br>
+<button onclick="Search()" class="button button">Search</button>
+</div>
+    
+
+<div id="Update" class="tabcontent" style="color:#ffffff">
+<h1>Update Route</h1>
+    <label>Route Name:</label> <input type="text" id="PutROUTE_NAMEE"><br>
+    <label>Starting Point Location Name:</label> <input type="text" id="PutLOC_START_NAMEE"><br>
+    <label>End Point Location Name:</label> <input type="text" id="PutLOC_END_NAMEE"><br>
+    <label>Full Fare:</label> <input type="text" id="PutFULL_FARE"><br><br>
+<button onclick="Update()" class="button button">Update</button>
+</div>
+
+
+<div id="Delete" class="tabcontent" style="color:#ffffff">
+<h1>Delete Route</h1>
+    <label>Route Name:</label> <input type="text" id="Deletekeyword"><br><br>
+<button onclick="Delete()" class="button button">Delete</button>
+</div>
+
+
+<div id="Add" class="tabcontent" style="color:#ffffff">
+<h1>Add New Route</h1>
+    <label>Company Code:</label> <input type="text" id ="PostCOMPANY_CODE"><br>
+    <label>Route Name:</label> <input type="text" id ="PostROUTE_NAMEE"><br>
+    <label>Starting Point Location Name:</label> <input type="text" id ="PostLOC_START_NAMEE"><br>
+    <label>End Point Location Name:</label> <input type="text" id ="PostLOC_END_NAMEE"><br>
+    <label>Full Fare:</label> <input type="text" id="PostFULL_FARE"><br><br>
+<button onclick="Add()" class="button button">Add</button>
+</div>
+
+<div id ="output" class="output"></div><br>
+
+</body>
+</html>
